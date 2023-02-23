@@ -74,9 +74,9 @@ public class Player : MonoBehaviour
     {
         //uncomment only one at the time! 
 
-        //SingleStickMovement();
+        SingleStickMovement();
 
-        FirstPersonMovement();
+        //FirstPersonMovement();
 
         //TwinStickMovement();
 
