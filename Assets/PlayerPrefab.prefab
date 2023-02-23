@@ -16,7 +16,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6413416639812361271
 Transform:
   m_ObjectHideFlags: 0
@@ -242,7 +242,7 @@ MonoBehaviour:
   m_DefaultControlScheme: Gamepad
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
-  m_Camera: {fileID: 2879798732943708741}
+  m_Camera: {fileID: 6190021355620046693}
 --- !u!114 &-4472597160913118672
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -264,8 +264,8 @@ MonoBehaviour:
   upDownRange: 60
   leftStick: {x: 0, y: 0}
   rightStick: {x: 0, y: 0}
-  controller: {fileID: 0}
-  playerInput: {fileID: 0}
+  controller: {fileID: 6214367190613100869}
+  playerInput: {fileID: 3984910858365239293}
   animationSpeed: 1
   animationSprintSpeed: 2
   game: {fileID: 0}
@@ -322,7 +322,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6929723865256586317
 Transform:
   m_ObjectHideFlags: 0

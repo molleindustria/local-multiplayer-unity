@@ -8,7 +8,7 @@ public class Player : MonoBehaviour
 
     [Tooltip("Rotation speed if not instant")]
     public float rotationSpeed = 100;
-    
+
     [Tooltip("Sprint speed")]
     public float sprintSpeed = 10.0f;
 
@@ -19,7 +19,7 @@ public class Player : MonoBehaviour
     public float jumpHeight = 1.2f;
     [Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
     public float gravity = -15.0f;
-    
+
     [Tooltip("The angle the player can look up and down")]
     public float upDownRange = 60.0f;
 
@@ -53,36 +53,39 @@ public class Player : MonoBehaviour
         //find the "brain" and notify it of the new player
         game = FindObjectOfType<Game>();
 
+
+        if (animator == null)
+        {
+            animator = GetComponent<Animator>();
+        }
+
+        if (playerInput == null)
+            playerInput = GetComponent<PlayerInput>();
+
+
         if (game != null)
         {
             //pass a reference to this script
             game.PlayerJoined(this);
         }
-
-        if(animator == null)
-        {
-            animator = GetComponent<Animator>();
-        }
-
-        PlayerInput playerInput = GetComponent<PlayerInput>();
     }
 
     void Update()
     {
         //uncomment only one at the time! 
 
-        SingleStickMovement();
+        //SingleStickMovement();
 
-        //FirstPersonMovement();
+        FirstPersonMovement();
 
         //TwinStickMovement();
 
         //PlayerRelativeMovement();
-        
+
 
 
         //basic example of controlling an animated character
-        if(animator != null && controller.velocity.magnitude > 0.1f)
+        if (animator != null && controller.velocity.magnitude > 0.1f)
         {
             if (controller.isGrounded)
             {
@@ -164,7 +167,7 @@ public class Player : MonoBehaviour
 
         //incremental rotation: right stick horizontal increases the rotation 
         transform.Rotate(0, rightStick.x * Time.deltaTime * rotationSpeed, 0);
-        
+
         Vector3 speed = new Vector3(0, verticalVelocity, leftStick.y * movementSpeed);
 
         //relative movement: up means move in the direction the player is facing
@@ -189,10 +192,10 @@ public class Player : MonoBehaviour
         {
             targetSpeed = sprintSpeed;
         }
-        
+
         //factor gravity
         verticalVelocity += gravity * Time.deltaTime;
-        
+
         if (controller.isGrounded && jumpedThisFrame)
         {
             //calculate the jump velocity based on the desired jump height
@@ -205,7 +208,7 @@ public class Player : MonoBehaviour
 
         //since it's in update and continuous the vector has to be multiplied by Time.deltaTime to be frame independent
         controller.Move(movement * Time.deltaTime);
-        
+
         //absolute rotation: controller rotates in the direction of the stick
         //Keep the rotation if the stick is not being moved 
         //magnitude is the lenght of the vector, small magnitude = stick in the dead zone 
@@ -214,7 +217,7 @@ public class Player : MonoBehaviour
             Vector3 lookDirection = new Vector3(rightStick.x, 0, rightStick.y);
             transform.rotation = Quaternion.LookRotation(lookDirection);
         }
-        
+
         //end of the frame reset the bool
         jumpedThisFrame = false;
     }
@@ -224,46 +227,50 @@ public class Player : MonoBehaviour
 
     //simple FPS style with jump and dash: left stick movement/strafe right stick rotation/look
     void FirstPersonMovement()
-    {   
+    {
         //incremental rotation: right stick horizontal increases the rotation 
         transform.Rotate(0, rightStick.x * Time.deltaTime * rotationSpeed, 0);
 
         //looking up and down: multiply the look range by the stick position (-1 to 1)
-        float targetLookAngle = -rightStick.y* upDownRange;
+        float targetLookAngle = -rightStick.y * upDownRange;
 
-        //smoothing the up down look so it's not to sudden
-        float smoothedLookAngle = Mathf.SmoothDampAngle(playerInput.camera.transform.localRotation.eulerAngles.x, targetLookAngle, ref lookVelocity, lookSmoothing);
 
-        //apply to x axis of the camera
-        playerInput.camera.transform.localRotation = Quaternion.Euler(smoothedLookAngle, 0, 0);
-    
+        if (playerInput.camera != null)
+        {
+            //smoothing the up down look so it's not to sudden
+            float smoothedLookAngle = Mathf.SmoothDampAngle(playerInput.camera.transform.localRotation.eulerAngles.x, targetLookAngle, ref lookVelocity, lookSmoothing);
+
+            //apply to x axis of the camera
+            playerInput.camera.transform.localRotation = Quaternion.Euler(smoothedLookAngle, 0, 0);
+        }
+
         float targetSpeed = movementSpeed;
 
-        
+
         if (sprinting)
         {
             targetSpeed = sprintSpeed;
         }
-        
+
 
         // Movement
         float forwardSpeed = leftStick.y * targetSpeed;
         float sideSpeed = leftStick.x * targetSpeed;
-        
+
         //gravity/jump
         verticalVelocity += gravity * Time.deltaTime;
-        
+
         if (controller.isGrounded && jumpedThisFrame)
         {
             verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity); ;
         }
-        
+
         Vector3 speed = new Vector3(sideSpeed, verticalVelocity, forwardSpeed);
 
         speed = transform.rotation * speed;
 
         controller.Move(speed * Time.deltaTime);
-        
+
         //end of the frame reset the bool
         jumpedThisFrame = false;
     }
@@ -284,7 +291,7 @@ public class Player : MonoBehaviour
 
         foreach (Renderer r in mr)
             r.material.color = c;
-        
+
     }
 
     /*
@@ -297,7 +304,7 @@ public class Player : MonoBehaviour
     {
         print("Kick action");
     }
-    
+
     //this is a less proper naming but more intuitive if you are used to just check an axis
     void OnLeftStickMove(InputValue value)
     {
@@ -326,7 +333,7 @@ public class Player : MonoBehaviour
             sprinting = false;
         }
     }
-    
+
 
     //just another way to use an input setting a temporary boolean 
     //that I can use in the update and that gets reset at the end of it

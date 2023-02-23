@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{7750886C-974B-F263-C5E8-694CA9D09A2F}</ProjectGuid>
+    <ProjectGuid>{614EAD65-45AB-3443-210F-EC6D5DCD71FC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -53,10 +53,10 @@
     <UnityVersion>2021.3.16f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Assets\Player.cs" />
-    <Compile Include="Assets\Game.cs" />
     <Compile Include="Assets\RigidBodyPush.cs" />
+    <Compile Include="Assets\Game.cs" />
     <Compile Include="Assets\FollowTarget.cs" />
+    <Compile Include="Assets\Player.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Models\CelShader.shader" />

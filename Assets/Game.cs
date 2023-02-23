@@ -14,7 +14,7 @@ public class Game : MonoBehaviour
     public Color A_COLOR;
     public Color B_COLOR;
 
-    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -29,7 +29,7 @@ public class Game : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void PlayerJoined(Player p)
@@ -40,18 +40,20 @@ public class Game : MonoBehaviour
          * are specific of each player
          */
 
-        
+
         //if the input manager is set to split screen kill the main camera
         if (pim.splitScreen)
         {
             //disable the main camera, it will be replaced by the player camera
             mainCamera.enabled = false;
         }
-        else if(p.playerInput.camera != null)
-        {
-            //if it's not split screen kill the player camera just to be sure
-            p.playerInput.camera.enabled = false;
-        }
+        else if (p.playerInput != null)
+            if (p.playerInput.camera != null)
+            {
+
+                //if it's not split screen kill the player camera just to be sure
+                p.playerInput.camera.enabled = false;
+            }
 
 
         //add to the array
@@ -62,7 +64,7 @@ public class Game : MonoBehaviour
 
 
         //assign a team
-        if(players.Count <= 2)
+        if (players.Count <= 2)
         {
             p.ChangeColor(A_COLOR);
         }
@@ -77,7 +79,7 @@ public class Game : MonoBehaviour
         //players unplug and replug during the game
 
     }
-    
+
 
 
 }
