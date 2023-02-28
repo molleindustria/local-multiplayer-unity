@@ -23,6 +23,14 @@ public class Player : MonoBehaviour
     [Tooltip("The angle the player can look up and down")]
     public float upDownRange = 60.0f;
 
+    [Tooltip("Only for the physics controls")]
+    public float PhysicsMovementForce = 100;
+    [Tooltip("Only for the physics controls")]
+    public float PhysicsMovementTorque = 10;
+    [Tooltip("Only for the physics controls")]
+    public float PhysicsJumpForce = 10;
+
+
     //the analog values read from the controller
     public Vector2 leftStick = Vector2.zero;
     public Vector2 rightStick = Vector2.zero;
@@ -45,6 +53,7 @@ public class Player : MonoBehaviour
     public Game game;
 
     public Animator animator;
+    public Rigidbody rb;
 
     private void Start()
     {
@@ -81,37 +90,96 @@ public class Player : MonoBehaviour
         //TwinStickMovement();
 
         //PlayerRelativeMovement();
+        
 
+        //Attention: this movement requires the physics player prefab in Main > player input manager > player prefab
+        //PhysicsMovement();
+        
 
-
-        //basic example of controlling an animated character
-        if (animator != null && controller.velocity.magnitude > 0.1f)
+        //basic example of controlling an animated character 
+        //with information from the character controller
+        if (controller != null)
         {
-            if (controller.isGrounded)
+            if (animator != null && controller.velocity.magnitude > 0.1f)
             {
-                //change the playing speed based on 
-                if (sprinting)
-                    animator.speed = animationSprintSpeed;
-                else
-                    animator.speed = animationSpeed;
+                if (controller.isGrounded)
+                {
+                    //change the playing speed based on 
+                    if (sprinting)
+                        animator.speed = animationSprintSpeed;
+                    else
+                        animator.speed = animationSpeed;
 
-                animator.Play("Walk");
+                    animator.Play("Walk");
+                }
+                else
+                {
+                    //if jumping freeze the walking animation at time 0
+                    //I didn't have time to make a jumping animation
+                    animator.Play("Walk", 0, 0);
+                    animator.speed = 0;
+                }
             }
             else
             {
-                //if jumping freeze the walking animation at time 0
-                //I didn't have time to make a jumping animation
-                animator.Play("Walk", 0, 0);
-                animator.speed = 0;
+                animator.speed = 1;
+                animator.Play("Idle");
             }
         }
-        else
+    }
+    
+
+    void PhysicsMovement()
+    {
+        if (rb == null)
         {
-            animator.speed = 1;
-            animator.Play("Idle");
+            rb = GetComponent<Rigidbody>();
         }
+
+        //still null
+        if (rb == null)
+        {
+            print("Attention: this movement requires a rigid body. put the physics player prefab in Main > player input manager > player prefab");
+        }
+
+        float movementForce = PhysicsMovementForce;
+
+        //if sprinting double speed? 
+        if (sprinting)
+        {
+            movementForce *= 2;
+        }
+
+        Vector3 movement = new Vector3(leftStick.x * movementForce, 0, leftStick.y * movementForce);
+
+        Vector3 directionRelativeMovement = transform.rotation * movement;
+
+        
+        rb.AddForce(directionRelativeMovement * Time.deltaTime);
+        
+        rb.AddTorque(transform.up * rightStick.x * rotationSpeed * Time.deltaTime * PhysicsMovementTorque);
+
+        //physics body doesn't know if it's grounded so I have to do a raycast down
+        //when there is a jump attempt
+        if (jumpedThisFrame)
+        {
+            //1.1 is the raycast distance, 1 is half the size of the collider
+            if (Physics.Raycast(transform.position, -transform.up, 1.2f))
+            {
+                //player is touching ground therefore can jump
+                //impulse is better suited for instant actions
+                rb.AddForce(new Vector3(0, PhysicsJumpForce, 0), ForceMode.Impulse);
+            }
+            else
+            {
+                //player is in the air
+            }
+        }
+
+        jumpedThisFrame = false;
     }
 
+    
 
     //left stick determines the movement, character faces the direction
     void SingleStickMovement()
@@ -341,6 +409,6 @@ public class Player : MonoBehaviour
     {
         jumpedThisFrame = true;
     }
-
+    
 
 }
